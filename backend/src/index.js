@@ -17,9 +17,6 @@ const __dirname = path.dirname(__filename);
 const PORT = process.env.PORT || 3030;
 
 // MAking app to serve Frontend in Production
-
-console.log(process.env.NODE_ENV === "production");
-
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../../frontend/dist/")));
 
