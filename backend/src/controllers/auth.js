@@ -1,4 +1,6 @@
 import User from "../models/User.js";
+import { generateToken } from "../utils/generateToken.js";
+
 export const signup = async (req, res) => {
   const { name, email, password } = req.body;
 
@@ -25,9 +27,15 @@ export const signup = async (req, res) => {
     });
 
     await user.save();
+    const token = generateToken({ user: user._id });
+    res.cookie("jwt", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
     return res.status(201).json({
       message: "User created SUCCESSFULLY.",
-      data: user,
     });
   } catch (error) {
     return res.status(500).json({ message: "Internal Server Error. ", error });
