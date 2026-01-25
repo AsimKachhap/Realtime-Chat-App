@@ -1,7 +1,9 @@
 import User from "../models/User.js";
+import bcrypt from "bcryptjs";
 import { generateToken } from "../utils/generateToken.js";
 import { sendOnboardingEmail } from "../helpers/emailHandler.js";
 
+// SIGNUP
 export const signup = async (req, res) => {
   const { name, email, password } = req.body;
 
@@ -44,8 +46,58 @@ export const signup = async (req, res) => {
     );
     return res.status(201).json({
       message: "User created SUCCESSFULLY.",
+      data: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        profilePic: user.profilePic,
+      },
     });
   } catch (error) {
     return res.status(500).json({ message: "Internal Server Error. ", error });
+  }
+};
+
+// LOG IN
+
+export const login = async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({
+        message: "Invalid Credentials.",
+      });
+    }
+
+    const isPasswordCorrect = await bcrypt.compare(password, user.password);
+    if (!isPasswordCorrect) {
+      return res.status(400).json({
+        message: "Invalid Credentials.",
+      });
+    }
+
+    const token = generateToken({ user: user._id });
+    res.cookie("jwt", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    return res.status(201).json({
+      message: "User Logged in SUCCESSFULLY.",
+      data: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        profilePic: user.profilePic,
+      },
+    });
+  } catch (error) {
+    console.log("Error in Login Controller.", error);
+    res.status(500).json({
+      message: "Internal Server error.",
+    });
   }
 };
