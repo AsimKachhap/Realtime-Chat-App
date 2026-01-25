@@ -1,5 +1,6 @@
 import User from "../models/User.js";
 import { generateToken } from "../utils/generateToken.js";
+import { sendOnboardingEmail } from "../helpers/emailHandler.js";
 
 export const signup = async (req, res) => {
   const { name, email, password } = req.body;
@@ -34,6 +35,13 @@ export const signup = async (req, res) => {
       sameSite: "strict",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
+
+    const onboardingEmailStatus = await sendOnboardingEmail(
+      "Chatify",
+      user.email,
+      user.name,
+      "Welcome to Chatify",
+    );
     return res.status(201).json({
       message: "User created SUCCESSFULLY.",
     });
