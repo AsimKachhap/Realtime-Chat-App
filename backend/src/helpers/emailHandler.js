@@ -3,7 +3,7 @@ import { onboardingEmailTemplate } from "./emailTemplate.js";
 export const sendOnboardingEmail = async function (
   senderName,
   userEmail,
-  recieverName,
+  username,
   subject,
 ) {
   const body = onboardingEmailTemplate();
