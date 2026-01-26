@@ -107,3 +107,17 @@ export const login = async (req, res) => {
     });
   }
 };
+
+// LOGOUT
+
+export const logout = async (req, res) => {
+  res.clearCookie("jwt", {
+    // Always match original cookie settings to avoid gotchas
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+  });
+  return res.status(200).json({
+    message: "Logged out SUCCESSFULLY.",
+  });
+};
