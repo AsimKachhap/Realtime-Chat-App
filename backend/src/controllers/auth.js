@@ -107,3 +107,14 @@ export const login = async (req, res) => {
     });
   }
 };
+
+// LOGOUT
+
+export const logout = async (req, res) => {
+  res.cookie("jwt", "", {
+    maxAge: 0,
+  });
+  return res.status(200).json({
+    message: "Logged out SUCCESSFULLY.",
+  });
+};
