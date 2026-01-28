@@ -30,7 +30,7 @@ export const signup = async (req, res) => {
     });
 
     await user.save();
-    const token = generateToken({ user: user._id });
+    const token = generateToken({ id: user._id });
     res.cookie("jwt", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -83,7 +83,7 @@ export const login = async (req, res) => {
       });
     }
 
-    const token = generateToken({ user: user._id });
+    const token = generateToken({ id: user._id });
     res.cookie("jwt", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
