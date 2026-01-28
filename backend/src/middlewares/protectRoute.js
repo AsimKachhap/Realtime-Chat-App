@@ -1,7 +1,6 @@
-import User from "../models/User.js";
 import jwt from "jsonwebtoken";
 
-export const protectRoute = async (req, resizeBy, next) => {
+export const protectRoute = async (req, res, next) => {
   const targetUserId = req.params.id;
   const token = req.cookies["jwt"];
   if (!token) {
@@ -10,6 +9,10 @@ export const protectRoute = async (req, resizeBy, next) => {
     });
   }
   const currentUser = jwt.decode(token, process.env.JWT_SECRET);
-  console.log(currentUser);
+  if (currentUser.id !== targetUserId) {
+    return res.status(404).json({
+      message: "FORBIDDEN; You cannot update other's details.",
+    });
+  }
   next();
 };
